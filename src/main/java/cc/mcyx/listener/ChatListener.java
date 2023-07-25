@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 
@@ -14,7 +15,7 @@ public class ChatListener implements Listener {
 
     public static AuthMeApi authMeApi = AuthMeApi.getInstance();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void chatEvent(AsyncPlayerChatPreviewEvent event) {
         Player player = event.getPlayer();
         if (!authMeApi.isAuthenticated(player)) {
