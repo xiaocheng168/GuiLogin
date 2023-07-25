@@ -1,0 +1,7 @@
+name: AuthLogin
+version: 1.0.0
+main: cc.mcyx.AuthLogin
+author: Zcc (星兮兮)
+api-version: 1.20
+depend:
+  - Authme
