@@ -1,6 +1,7 @@
 package cc.mcyx.listener;
 
 import cc.mcyx.AuthLogin;
+import cc.mcyx.config.MessageConfig;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
@@ -26,14 +27,14 @@ public class ChatListener implements Listener {
             //用户是否已注册
             if (!authMeApi.isRegistered(playerName)) {
                 //注册用户
-                sendMessage(player, authMeApi.registerPlayer(playerName, password) ? "注册成功!" : "注册失败?请联系服务器内管理员!");
+                sendMessage(player, authMeApi.registerPlayer(playerName, password) ? MessageConfig.getMessage("register.success", "注册成功") : MessageConfig.getMessage("register.error", "登录失败,可能是账号或者密码错误"));
             } else {
                 //判断是否登录成功 成功将听过验证 否则失败！
                 if (authMeApi.checkPassword(playerName, password)) {
                     authMeApi.forceLogin(player);
-                    sendMessage(player, "登录成功");
+                    sendMessage(player, MessageConfig.getMessage("login.success", "登录成功"));
 
-                } else sendMessage(player, "登录失败，密码可能不正确哦!");
+                } else sendMessage(player, MessageConfig.getMessage("login.error", "登录失败，可能是密码不正确哦"));
             }
         }
     }
