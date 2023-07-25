@@ -10,19 +10,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerChatPreviewEvent;
 
 public class ChatListener implements Listener {
 
     public static AuthMeApi authMeApi = AuthMeApi.getInstance();
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void chatEvent(AsyncPlayerChatPreviewEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void chatEvent(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        //用户没有登录的情况下
         if (!authMeApi.isAuthenticated(player)) {
             String playerName = player.getName();
             String password = event.getMessage();
-            //用户没有登录的情况下
+            //取消消息事件
             event.setCancelled(true);
             //用户是否已注册
             if (!authMeApi.isRegistered(playerName)) {
