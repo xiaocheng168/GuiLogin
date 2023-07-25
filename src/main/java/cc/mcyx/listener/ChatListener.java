@@ -22,7 +22,8 @@ public class ChatListener implements Listener {
             String password = event.getMessage();
             //用户没有登录的情况下
             event.setCancelled(true);
-            if (authMeApi.isRegistered(playerName)) {
+            //用户是否已注册
+            if (!authMeApi.isRegistered(playerName)) {
                 //注册用户
                 sendMessage(player, authMeApi.registerPlayer(playerName, password) ? "注册成功!" : "注册失败?请联系服务器内管理员!");
             } else {
