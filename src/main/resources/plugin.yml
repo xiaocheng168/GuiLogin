@@ -6,3 +6,9 @@ api-version: 1.20
 folia-supported: true
 depend:
   - AuthMe
+
+commands:
+  GuiLogin:
+    description: "GUI快捷登录"
+    permission: "GuiLogin.admin"
+    permission-message: "你没有权限呢?"
