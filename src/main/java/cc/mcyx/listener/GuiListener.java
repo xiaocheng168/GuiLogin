@@ -22,7 +22,7 @@ public class GuiListener implements Listener {
         //获取交互界面
         Inventory clickedInventory = event.getClickedInventory();
         //判断是否为
-        if (clickedInventory instanceof AnvilInventory anvilInventory) {
+        if (clickedInventory instanceof AnvilInventory anvilInventory && event.getSlot() == 2) {
             //获取玩家输入的密码
             String password = anvilInventory.getRenameText();
             //判断密码是否正确
