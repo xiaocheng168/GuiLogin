@@ -6,3 +6,8 @@ message:
     error: "注册失败,可能是账号或者密码错误"
     success: "注册成功"
   reload: "配置文件已刷新!"
+setting:
+  #注册完后是否自动登录?
+  register_auto_login: true
+  #Gui or Chat 两种类型 分别是 聊天直接发 与 铁砧GUI
+  type: chat
