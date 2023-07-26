@@ -44,11 +44,13 @@ public class GuiNetworkListener extends PacketAdapter {
             if (!AuthMeApi.getInstance().isAuthenticated(player)) {
                 //玩家加入服务器
                 if (event.getPacketType().equals(PacketType.Play.Client.CUSTOM_PAYLOAD)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, "请登录"));
+                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, AuthMeApi.getInstance().isRegistered(player.getName()) ? "请登录" : "请注册"));
                 }
+                //玩家关闭窗口
                 if (event.getPacketType().equals(PacketType.Play.Client.CLOSE_WINDOW)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, "请登录"));
+                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, AuthMeApi.getInstance().isRegistered(player.getName()) ? "请登录" : "请注册"));
                 }
+                //玩家点击物品(按钮)
                 if (event.getPacketType().equals(PacketType.Play.Client.WINDOW_CLICK)) {
 
                     //取消点击事件
@@ -57,7 +59,7 @@ public class GuiNetworkListener extends PacketAdapter {
 
                     //获取玩家登录的密码
                     ItemStack itemStack = event.getPacket().getItemModifier().getValues().get(0);
-                    if (itemStack != null) {
+                    if (itemStack != null && itemStack.getItemMeta() != null) {
                         String password = itemStack.getItemMeta().getDisplayName();
                         //玩家是否已注册
                         if (AuthMeApi.getInstance().isRegistered(playerName)) {
@@ -68,18 +70,29 @@ public class GuiNetworkListener extends PacketAdapter {
                                 MessageSender.sendMessage(player, ConfigManager.getMessage("login.success", "登录成功"));
                                 protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
                             } else {
-                                MessageSender.sendMessage(player, ConfigManager.getMessage("login.error", "登录失败，可能是密码不正确哦"));
+                                MessageSender.sendMessage(player, ConfigManager.getMessage("login.error", "登录失败,可能是账号或者密码错误!"));
                                 this.openGui(player, "请登录");
                             }
-
                         } else {
-                            //注册过程 Register
-                            MessageSender.sendMessage(player, authMeApi.registerPlayer(playerName, password) ? ConfigManager.getMessage("register.success", "注册成功") : ConfigManager.getMessage("register.error", "登录失败,可能是账号或者密码错误"));
-                            //注册完后是否自动登录
-                            if ((Boolean) (ConfigManager.getSetting("register_auto_login")))
-                                authMeApi.forceLogin(player);
+                            //密码不能为空
+                            if (password.equalsIgnoreCase("")) {
+                                MessageSender.sendMessage(player, ConfigManager.getMessage("register.error", "注册失败,可能是密码不符合要求"));
+                                this.openGui(player, "请注册");
+                            } else {
+                                //注册过程 Register
+                                MessageSender.sendMessage(player, authMeApi.registerPlayer(playerName, password) ? ConfigManager.getMessage("register.success", "注册成功") : ConfigManager.getMessage("register.error", "登录失败,可能是账号或者密码错误"));
+                                //注册完后是否自动登录
+                                if ((Boolean) (ConfigManager.getSetting("register_auto_login"))) {
+                                    authMeApi.forceLogin(player);
+                                } else
+                                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, "请登录"));
+
+                                protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
+
+                            }
+
                         }
-                    }
+                    } else MessageSender.sendMessage(player, "点哪呢?嗯?~~");
                 }
             }
         } catch (Exception e) {

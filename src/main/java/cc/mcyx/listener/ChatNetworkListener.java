@@ -32,13 +32,13 @@ public class ChatNetworkListener extends PacketAdapter {
                 //用户是否已注册
                 if (!authMeApi.isRegistered(playerName)) {
                     //注册用户
-                    MessageSender.sendMessage(player, authMeApi.registerPlayer(playerName, password) ? ConfigManager.getMessage("register.success", "注册成功") : ConfigManager.getMessage("register.error", "登录失败,可能是账号或者密码错误"));
+                    MessageSender.sendMessage(player, authMeApi.registerPlayer(playerName, password) ? ConfigManager.getMessage("register.success", "注册成功") : ConfigManager.getMessage("register.error", "注册失败,可能是密码不符合要求"));
                     //注册完后是否自动登录
                     if ((Boolean) (ConfigManager.getSetting("register_auto_login"))) authMeApi.forceLogin(player);
                 } else {
                     //判断是否登录成功 成功将听过验证 否则失败！
                     if (authMeApi.checkPassword(playerName, password)) {
-                        authMeApi.forceLogin(player);
+                        authMeApi.forceLogin(player); 
                         MessageSender.sendMessage(player, ConfigManager.getMessage("login.success", "登录成功"));
                     } else
                         MessageSender.sendMessage(player, ConfigManager.getMessage("login.error", "登录失败，可能是密码不正确哦"));
