@@ -1,29 +1,30 @@
 package cc.mcyx;
 
 import cc.mcyx.config.MessageConfig;
-import cc.mcyx.listener.ChatListener;
+import cc.mcyx.listener.NetworkListener;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public class AuthLogin extends JavaPlugin {
+public class FastLogin extends JavaPlugin {
 
-    public static AuthLogin authLogin;
+    public static FastLogin fastLogin;
 
     @Override
     public void onLoad() {
-        authLogin = this;
+        fastLogin = this;
         this.saveDefaultConfig();
     }
 
     @Override
     public void onEnable() {
-        Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
-//        Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
         getLogger().info("GuiAuth 已载入");
+        //注册数据包监听器
+        ProtocolLibrary.getProtocolManager().addPacketListener(new NetworkListener(this, PacketType.Play.Client.CHAT));
     }
 
     @Override
