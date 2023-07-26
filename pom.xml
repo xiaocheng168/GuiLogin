@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cc.mcyx</groupId>
-    <artifactId>FastLogin</artifactId>
+    <artifactId>FastAuth</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -72,6 +72,14 @@
             <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/folia-1.20.1.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com-mojang</groupId>
+            <artifactId>brigadier-message</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/brigadier-1.0.16-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 
