@@ -1,6 +1,6 @@
-name: FastLogin
+name: FastAuth
 version: ${project.version}
-main: cc.mcyx.FastLogin
+main: cc.mcyx.FastAuth
 author: Zcc (星兮兮)
 api-version: 1.13
 folia-supported: true
@@ -8,7 +8,7 @@ depend:
   - AuthMe
   - ProtocolLib
 commands:
-  GuiLogin:
-    description: "GUI快捷登录"
-    permission: "GuiLogin.admin"
+  FastAuth:
+    description: "FastAuth 重载配置命令"
+    permission: "fastAuth.admin"
     permission-message: "你没有权限呢?"
