@@ -1,12 +1,12 @@
-name: AuthLogin
-version: 1.0.0
-main: cc.mcyx.AuthLogin
+name: FastLogin
+version: ${project.version}
+main: cc.mcyx.FastLogin
 author: Zcc (星兮兮)
-api-version: 1.20
+api-version: 1.13
 folia-supported: true
 depend:
   - AuthMe
-
+  - ProtocolLib
 commands:
   GuiLogin:
     description: "GUI快捷登录"
