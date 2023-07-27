@@ -6,16 +6,16 @@
     <hr/>
 </div>
 
-# 项目作用 ⭐
+# ⭐ 项目作用 
 
 #### ❤️ 解决掉繁琐的 /reg、/l 等注册命令，让玩家有一个新的登录方式，给服务器一点不一样的地方
 
-# 怎么下载? how to download? 🍕
+# 🍕 怎么下载? how to download?
 
 <a href="https://github.com/xiaocheng168/GuiLogin/releases">😍 点我马上下载!（Release）</a>
 
-## 依赖 💕
+## 💕 依赖 
     ✔️ AuthMe
     ✔️ ProtocolLib
-## 支持版本 🤩
+##  🤩 支持版本
     ✔️ Folia 1.20.1 

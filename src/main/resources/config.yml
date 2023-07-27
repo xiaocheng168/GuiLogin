@@ -12,3 +12,6 @@ setting:
   register_auto_login: true
   #Gui or Chat 两种类型 分别是 聊天直接发 与 铁砧GUI
   type: chat
+  #Gui界面的btn材质
+  gui:
+    button_item_material: APPLE
