@@ -3,6 +3,7 @@ package cc.mcyx.listener;
 import cc.mcyx.FastAuth;
 import cc.mcyx.config.ConfigManager;
 import cc.mcyx.config.MessageSender;
+import cc.mcyx.manager.AuthManager;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -25,11 +26,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import static cc.mcyx.listener.ChatNetworkListener.authMeApi;
-
 //Gui新风格登录
 public class GuiNetworkListener extends PacketAdapter {
-    ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+    private static final ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
 
     public GuiNetworkListener(Plugin plugin, PacketType... types) {
         super(plugin, types);
@@ -44,54 +43,29 @@ public class GuiNetworkListener extends PacketAdapter {
             if (!AuthMeApi.getInstance().isAuthenticated(player)) {
                 //玩家加入服务器
                 if (event.getPacketType().equals(PacketType.Play.Client.CUSTOM_PAYLOAD)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, AuthMeApi.getInstance().isRegistered(player.getName()) ? "请登录" : "请注册"));
+                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
                 }
                 //玩家关闭窗口
                 if (event.getPacketType().equals(PacketType.Play.Client.CLOSE_WINDOW)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, AuthMeApi.getInstance().isRegistered(player.getName()) ? "请登录" : "请注册"));
+                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
                 }
                 //玩家点击物品(按钮)
                 if (event.getPacketType().equals(PacketType.Play.Client.WINDOW_CLICK)) {
-
                     //取消点击事件
                     event.setCancelled(true);
-                    String playerName = player.getName();
-
                     //获取玩家登录的密码
                     ItemStack itemStack = event.getPacket().getItemModifier().getValues().get(0);
                     if (itemStack != null && itemStack.getItemMeta() != null) {
                         String password = itemStack.getItemMeta().getDisplayName();
-                        //玩家是否已注册
-                        if (AuthMeApi.getInstance().isRegistered(playerName)) {
-                            //登录过程 Login
-                            //判断是否登录成功 成功将听过验证 否则失败！
-                            if (authMeApi.checkPassword(playerName, password)) {
-                                authMeApi.forceLogin(player);
-                                MessageSender.sendMessage(player, ConfigManager.getMessage("login.success", "登录成功"));
-                                protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
-                            } else {
-                                MessageSender.sendMessage(player, ConfigManager.getMessage("login.error", "登录失败,可能是账号或者密码错误!"));
-                                this.openGui(player, "请登录");
-                            }
-                        } else {
-                            //密码不能为空
-                            if (password.equalsIgnoreCase("")) {
-                                MessageSender.sendMessage(player, ConfigManager.getMessage("register.error", "注册失败,可能是密码不符合要求"));
-                                this.openGui(player, "请注册");
-                            } else {
-                                //注册过程 Register
-                                MessageSender.sendMessage(player, authMeApi.registerPlayer(playerName, password) ? ConfigManager.getMessage("register.success", "注册成功") : ConfigManager.getMessage("register.error", "登录失败,可能是账号或者密码错误"));
-                                //注册完后是否自动登录
-                                if ((Boolean) (ConfigManager.getSetting("register_auto_login"))) {
-                                    authMeApi.forceLogin(player);
-                                } else
-                                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player, "请登录"));
-
-                                protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
-
-                            }
-
+                        //禁止空密码
+                        if (password.equalsIgnoreCase("")) {
+                            MessageSender.sendMessage(player, ConfigManager.getMessage("empty", "不能提交空密码"));
+                            openGui(player);
+                            return;
                         }
+                        //校验完后关闭窗口
+                        if (AuthManager.auth(player, password, true))
+                            protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
                     } else MessageSender.sendMessage(player, "点哪呢?嗯?~~");
                 }
             }
@@ -101,13 +75,23 @@ public class GuiNetworkListener extends PacketAdapter {
         }
     }
 
+
+    /**
+     * 使用 NMS 发包打开Gui界面
+     *
+     * @param player 操作玩家
+     */
+    public static void openGui(Player player) {
+        openGui(player, AuthMeApi.getInstance().isRegistered(player.getName()) ? "请登录" : "请注册");
+    }
+
     /**
      * 使用 NMS 发包打开Gui界面
      *
      * @param player 操作玩家
      * @param title  Gui标题
      */
-    public void openGui(Player player, String title) {
+    public static void openGui(Player player, String title) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer handle = craftPlayer.getHandle();
         //创建 Gui 数据包
