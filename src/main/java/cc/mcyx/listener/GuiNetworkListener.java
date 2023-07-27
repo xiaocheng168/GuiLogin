@@ -64,8 +64,9 @@ public class GuiNetworkListener extends PacketAdapter {
                             return;
                         }
                         //校验完后关闭窗口
-                        if (AuthManager.auth(player, password, true))
+                        if (AuthManager.auth(player, password, true)) {
                             protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
+                        } else openGui(player);
                     } else MessageSender.sendMessage(player, "点哪呢?嗯?~~");
                 }
             }
@@ -102,12 +103,27 @@ public class GuiNetworkListener extends PacketAdapter {
         PacketPlayOutOpenWindow packetPlayOutOpenWindow = new PacketPlayOutOpenWindow(guiId, containerAnvil.a(), IChatBaseComponent.a(title));
         craftPlayer.getHandle().c.a(packetPlayOutOpenWindow);
         //设置物品
-        ItemStack itemStack = new ItemStack(Material.APPLE);
+        ItemStack itemStack = getBtnItemStack();
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.displayName(Component.text(""));
         itemStack.setItemMeta(itemMeta);
         //发送设置物品包
         PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(guiId, 0, 0, CraftItemStack.asNMSCopy(itemStack));
         craftPlayer.getHandle().c.a(packetPlayOutSetSlot);
+    }
+
+    /**
+     * 获取点击物品
+     *
+     * @return 返回物品堆 ItemStack
+     */
+    public static ItemStack getBtnItemStack() {
+        String uiBtnMaterial = (String) ConfigManager.getSetting("gui.button_item_material", "APPLE");
+        try {
+            Material.valueOf(uiBtnMaterial);
+        } catch (Exception e) {
+            uiBtnMaterial = "APPLE";
+        }
+        return new ItemStack(Material.valueOf(uiBtnMaterial));
     }
 }
