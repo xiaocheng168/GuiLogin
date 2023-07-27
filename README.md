@@ -1,6 +1,6 @@
 <div align="center">
     <br />
-    <img src="icon.jpg" width="260" height="260" style="border-radius: 50px">
+    <img src="icon.jpg" width="260" height="260" style="border-radius: 50px" alt="icon?">
     <h1>FastAuth✈️</h1>
     只为登录更快一步
     <hr/>
@@ -13,3 +13,9 @@
 # 怎么下载? how to download? 🍕
 
 <a href="https://github.com/xiaocheng168/GuiLogin/releases">😍 点我马上下载!（Release）</a>
+
+## 依赖 💕
+    ✔️ AuthMe
+    ✔️ ProtocolLib
+## 支持版本
+    ✔️ Folia 1.20.1 
