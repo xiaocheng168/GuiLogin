@@ -8,6 +8,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import net.kyori.adventure.text.Component;
@@ -25,6 +26,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.InvocationTargetException;
 
 //Gui新风格登录
 public class GuiNetworkListener extends PacketAdapter {
@@ -66,6 +69,8 @@ public class GuiNetworkListener extends PacketAdapter {
                         //校验完后关闭窗口
                         if (AuthManager.auth(player, password, true)) {
                             protocolManager.sendServerPacket(player, protocolManager.createPacket(PacketType.Play.Server.CLOSE_WINDOW));
+                            //更新玩家经验等级
+                            Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> player.setExp(player.getExp()));
                         } else openGui(player);
                     } else MessageSender.sendMessage(player, "点哪呢?嗯?~~");
                 }
@@ -93,6 +98,7 @@ public class GuiNetworkListener extends PacketAdapter {
      * @param title  Gui标题
      */
     public static void openGui(Player player, String title) {
+        setLevel(player);
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer handle = craftPlayer.getHandle();
         //创建 Gui 数据包
@@ -125,5 +131,21 @@ public class GuiNetworkListener extends PacketAdapter {
             uiBtnMaterial = "APPLE";
         }
         return new ItemStack(Material.valueOf(uiBtnMaterial));
+    }
+
+    /**
+     * 主要是解决一些没有等级的玩家
+     * 发送虚拟数据包，让玩家保底有这个经验
+     *
+     * @param player 操作的玩家
+     */
+    public static void setLevel(Player player) {
+        try {
+            PacketContainer packet = protocolManager.createPacket(PacketType.Play.Server.EXPERIENCE);
+            packet.getIntegers().write(1, 1);
+            protocolManager.sendServerPacket(player, packet);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
