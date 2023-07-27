@@ -2,7 +2,7 @@ name: FastAuth
 version: '${project.version}'
 main: cc.mcyx.FastAuth
 author: Zcc (星兮兮)
-api-version: 1.13
+api-version: 1.20.1
 folia-supported: true
 description: "只为更快登录而生!"
 depend:
