@@ -17,5 +17,5 @@
 ## 依赖 💕
     ✔️ AuthMe
     ✔️ ProtocolLib
-## 支持版本
+## 支持版本 🤩
     ✔️ Folia 1.20.1 
