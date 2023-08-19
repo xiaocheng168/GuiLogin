@@ -6,6 +6,10 @@ message:
     error: "注册失败,可能是密码不符合要求!"
     success: "注册成功"
   empty: '不能提交空密码!'
+  safe:
+    error_send_password:
+      title: "§c❌ 密码泄露风险 ❌"
+      subtitle: "§4请不要向任何玩家泄露自己的密码"
   reload: "配置文件已刷新!"
 setting:
   #注册完后是否自动登录?
@@ -15,3 +19,5 @@ setting:
   #Gui界面的btn材质
   gui:
     button_item_material: APPLE
+  #保护玩家密码意外发送（只针对Chat登录方式）主要是用来解决直接发送密码登录，有些玩家不知道自己已经登录了的问题
+  protectPassword: true

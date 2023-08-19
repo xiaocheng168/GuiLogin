@@ -46,11 +46,17 @@ public class GuiNetworkListener extends PacketAdapter {
             if (!AuthMeApi.getInstance().isAuthenticated(player)) {
                 //玩家加入服务器
                 if (event.getPacketType().equals(PacketType.Play.Client.CUSTOM_PAYLOAD)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
+                    long delayTime = 0L;
+                    if (Bukkit.getPluginManager().getPlugin("FastLogin") != null) {
+                        delayTime = 20L;
+                    }
+                    if (!player.isDead())
+                        Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> openGui(player), delayTime);
                 }
                 //玩家关闭窗口
                 if (event.getPacketType().equals(PacketType.Play.Client.CLOSE_WINDOW)) {
-                    Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
+                    //如果玩家死亡，发送重生命令
+                    if (!player.isDead()) Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
                 }
                 //玩家点击物品(按钮)
                 if (event.getPacketType().equals(PacketType.Play.Client.WINDOW_CLICK)) {
@@ -98,6 +104,8 @@ public class GuiNetworkListener extends PacketAdapter {
      * @param title  Gui标题
      */
     public static void openGui(Player player, String title) {
+        //判断玩家是否已登录 再决定是否打开GUI
+        if (AuthMeApi.getInstance().isAuthenticated(player)) return;
         setLevel(player);
         CraftPlayer craftPlayer = (CraftPlayer) player;
         EntityPlayer handle = craftPlayer.getHandle();
