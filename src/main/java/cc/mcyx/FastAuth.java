@@ -2,8 +2,8 @@ package cc.mcyx;
 
 import cc.mcyx.api.Metrics;
 import cc.mcyx.config.ConfigManager;
-import cc.mcyx.listener.GuiNetworkListener;
 import cc.mcyx.listener.ChatNetworkListener;
+import cc.mcyx.listener.GuiNetworkListener;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import net.kyori.adventure.text.Component;
