@@ -46,10 +46,7 @@ public class GuiNetworkListener extends PacketAdapter {
             if (!AuthMeApi.getInstance().isAuthenticated(player)) {
                 //玩家加入服务器
                 if (event.getPacketType().equals(PacketType.Play.Client.CUSTOM_PAYLOAD)) {
-                    long delayTime;
-                    delayTime = Bukkit.getPluginManager().getPlugin("FastLogin") != null ? 20L : 0L;
-                    if (!player.isDead())
-                        Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> openGui(player), delayTime);
+                    Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> openGui(player), 20L);
                 }
                 //玩家关闭窗口
                 if (event.getPacketType().equals(PacketType.Play.Client.CLOSE_WINDOW)) {
