@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="FastAuth:jar">
-    <output-path>$PROJECT_DIR$/../MinecraftServers/folia121/plugins</output-path>
+    <output-path>$PROJECT_DIR$/../MinecraftServers/spigot1.12.2/plugins</output-path>
     <root id="archive" name="FastAuth.jar">
       <element id="module-output" name="FastAuth" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/config.yml" />

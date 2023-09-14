@@ -56,7 +56,7 @@ public class FastAuth extends JavaPlugin implements Listener {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         this.reloadConfig();
         MessageSender.sendMessage(sender, ConfigManager.getMessage("reload", "配置文件已刷新!"));
         return true;
