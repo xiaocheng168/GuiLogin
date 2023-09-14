@@ -7,6 +7,8 @@ import cc.mcyx.listener.ChatNetworkListener;
 import cc.mcyx.listener.GuiNetworkListener;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
@@ -33,13 +35,24 @@ public class FastAuth extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        getLogger().info("只为登录更快一步!");
-        getLogger().info("FastAuth 已载入");
-        getLogger().info("版本: " + getDescription().getVersion());
-        getLogger().info("星兮兮!Zcc!");
+        log("§c只为登录更快一步!");
+        log("§aFastAuth §f已完美载入");
+        log("§a版本: §f" + getDescription().getVersion());
+        log("§a环境: §f" + Bukkit.getBukkitVersion());
+        log("星兮兮!Zcc!");
+        log("开放月夕交流群: 250181305");
         //注册数据包监听器
         ProtocolLibrary.getProtocolManager().addPacketListener(new ChatNetworkListener(this, PacketType.Play.Client.CHAT));
-        ProtocolLibrary.getProtocolManager().addPacketListener(new GuiNetworkListener(this, PacketType.Play.Client.WINDOW_CLICK, PacketType.Play.Client.CUSTOM_PAYLOAD, PacketType.Play.Client.CLOSE_WINDOW));
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(new GuiNetworkListener(this,
+                PacketType.Play.Client.WINDOW_CLICK,
+                PacketType.Play.Client.CLOSE_WINDOW,
+                PacketType.Play.Client.SETTINGS));
+    }
+
+
+    public static void log(Object s) {
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[" + ChatColor.GRAY + "FastAuth" + ChatColor.GREEN + "] " + ChatColor.WHITE + s);
     }
 
     @Override
