@@ -4,6 +4,7 @@ import cc.mcyx.FastAuth;
 import cc.mcyx.config.ConfigManager;
 import cc.mcyx.config.MessageSender;
 import cc.mcyx.manager.AuthManager;
+import cc.mcyx.nms.CraftNms;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -11,17 +12,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import fr.xephi.authme.api.v3.AuthMeApi;
-import net.kyori.adventure.text.Component;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
-import net.minecraft.network.protocol.game.PacketPlayOutSetSlot;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.inventory.ContainerAnvil;
-import net.minecraft.world.inventory.Containers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,11 +40,14 @@ public class GuiNetworkListener extends PacketAdapter {
                 if (event.getPacketType().equals(PacketType.Play.Client.CUSTOM_PAYLOAD)) {
                     Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> openGui(player), 20L);
                 }
+
                 //玩家关闭窗口
                 if (event.getPacketType().equals(PacketType.Play.Client.CLOSE_WINDOW)) {
+//                    System.out.println(event);
                     //如果玩家死亡，发送重生命令
                     if (!player.isDead()) Bukkit.getScheduler().runTask(FastAuth.fastAuth, () -> openGui(player));
                 }
+
                 //玩家点击物品(按钮)
                 if (event.getPacketType().equals(PacketType.Play.Client.WINDOW_CLICK)) {
                     //取消点击事件
@@ -99,7 +94,32 @@ public class GuiNetworkListener extends PacketAdapter {
      * @param title  Gui标题
      */
     public static void openGui(Player player, String title) {
-        //判断玩家是否已登录 再决定是否打开GUI
+        setLevel(player);
+
+        PacketContainer guiPacket = protocolManager.createPacket(PacketType.Play.Server.OPEN_WINDOW);
+
+        //创建 Gui 数据包
+        int guiId = CraftNms.getPlayerGuiId(player);
+        guiPacket.getModifier().write(0, guiId);
+        guiPacket.getModifier().write(1, CraftNms.getOpenGuiType());
+        //适应多版本，尝试全面使用NMS方式发包
+        guiPacket.getModifier().write(2, CraftNms.getChatComponentText(title));
+
+        //设置玩家点击物品
+        PacketContainer btnPacket = protocolManager.createPacket(PacketType.Play.Server.SET_SLOT);
+        btnPacket.getIntegers().write(0, guiId);
+        btnPacket.getIntegers().write(1, 0);
+        btnPacket.getItemModifier().write(0, getBtnItemStack(""));
+
+        try {
+            protocolManager.sendServerPacket(player, guiPacket);
+            protocolManager.sendServerPacket(player, btnPacket);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+
+     /*   //判断玩家是否已登录 再决定是否打开GUI
         if (AuthMeApi.getInstance().isAuthenticated(player)) return;
         setLevel(player);
         CraftPlayer craftPlayer = (CraftPlayer) player;
@@ -114,11 +134,12 @@ public class GuiNetworkListener extends PacketAdapter {
         //设置物品
         ItemStack itemStack = getBtnItemStack();
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.displayName(Component.text(""));
+        itemMeta.setDisplayName("§c");
         itemStack.setItemMeta(itemMeta);
         //发送设置物品包
         PacketPlayOutSetSlot packetPlayOutSetSlot = new PacketPlayOutSetSlot(guiId, 0, 0, CraftItemStack.asNMSCopy(itemStack));
         craftPlayer.getHandle().c.a(packetPlayOutSetSlot);
+*/
     }
 
     /**
@@ -126,14 +147,18 @@ public class GuiNetworkListener extends PacketAdapter {
      *
      * @return 返回物品堆 ItemStack
      */
-    public static ItemStack getBtnItemStack() {
+    public static ItemStack getBtnItemStack(String itemName) {
         String uiBtnMaterial = (String) ConfigManager.getSetting("gui.button_item_material", "APPLE");
         try {
             Material.valueOf(uiBtnMaterial);
         } catch (Exception e) {
             uiBtnMaterial = "APPLE";
         }
-        return new ItemStack(Material.valueOf(uiBtnMaterial));
+        ItemStack itemStack = new ItemStack(Material.valueOf(uiBtnMaterial));
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(itemName.equals("") ? "§c" : itemName);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 
     /**
@@ -151,4 +176,6 @@ public class GuiNetworkListener extends PacketAdapter {
             throw new RuntimeException(e);
         }
     }
+
+
 }
