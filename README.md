@@ -1,6 +1,6 @@
 <div align="center">
     <br />
-    <img src="icon.png" width="260" height="260" style="border-radius: 50px" alt="icon?">
+    <img src="icon.png" width="230" height="230" style="border-radius: 50px" alt="icon?">
     <h1>FastAuth✈️</h1>
     只为登录更快一步 快不止步!
     <hr/>
