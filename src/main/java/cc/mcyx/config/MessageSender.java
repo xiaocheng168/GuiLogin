@@ -1,6 +1,5 @@
 package cc.mcyx.config;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,7 +12,7 @@ public class MessageSender {
      * @param msg    消息内容
      */
     public static void sendMessage(CommandSender sender, String msg) {
-        sender.sendMessage(Component.text(msg.replace("&", "§")));
+        sender.sendMessage(msg.replace("&", "§"));
     }
 
     /**
