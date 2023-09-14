@@ -30,7 +30,8 @@ public class AuthManager {
                 //注册完后是否自动登录 延迟执行
                 if ((Boolean) (ConfigManager.getSetting("register_auto_login"))) {
                     Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> authMeApi.forceLogin(player), 1);
-                } else if (useGui.length > 0 && useGui[0]) Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> GuiNetworkListener.openGui(player), 1);
+                } else if (useGui.length > 0 && useGui[0])
+                    Bukkit.getScheduler().runTaskLater(FastAuth.fastAuth, () -> GuiNetworkListener.openGui(player, "Auto Login Box"), 1);
                 return true;
             } else {
                 //判断是否登录成功 成功将听过验证 否则失败！
